@@ -4,108 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Skill-Gap Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Modern Background & Typography */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8; 
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #333;
             margin: 0;
             padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         
-        /* --- NEW DASHBOARD LAYOUT --- */
         .app-wrapper {
             display: flex;
             gap: 30px;
-            max-width: 1200px; /* Constrain max width for ultra-wide screens */
-            margin: 0 auto; /* Center the whole dashboard */
-            align-items: flex-start; /* Crucial for the sticky sidebar to work */
+            max-width: 1250px;
+            margin: 0 auto;
+            align-items: flex-start;
         }
 
-        .left-panel {
-            flex: 1; /* Tells the left side to take up all remaining space */
-            min-width: 0; /* Prevents layout breaking on small screens */
-        }
-
+        .left-panel { flex: 1; min-width: 0; }
         .right-panel {
-            width: 380px; /* Fixed width for the chatbot */
-            flex-shrink: 0; /* Prevents the chatbot from getting squished */
-            position: sticky; /* Makes it "stick" to the screen */
-            top: 40px; /* Stays 40px from the top when scrolling */
+            width: 400px; 
+            flex-shrink: 0; 
+            position: sticky; 
+            top: 40px; 
         }
 
-        /* Container Styles */
+        /* Sleek Container Styles */
         .container, .chat-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08); 
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.5);
         }
 
-        h2 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;}
-        label { font-weight: 600; display: block; margin-bottom: 8px; color: #475569; }
+        h2 { 
+            margin-top: 0; 
+            color: #1e293b; 
+            border-bottom: 3px solid transparent; 
+            border-image: linear-gradient(to right, #4facfe, #00f2fe) 1;
+            padding-bottom: 15px;
+            font-weight: 700;
+        }
+
+        label { font-weight: 600; display: block; margin-bottom: 10px; color: #475569; font-size: 15px;}
         
+        /* Input & Textarea Enhancements */
         textarea, input[type="text"] {
             width: 100%;
-            padding: 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             box-sizing: border-box; 
             margin-bottom: 20px;
             font-family: inherit;
             font-size: 15px;
-            transition: border-color 0.2s;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
         }
-        textarea { height: 120px; resize: vertical; }
-        textarea:focus, input[type="text"]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        textarea { height: 130px; resize: vertical; }
+        textarea:focus, input[type="text"]:focus { 
+            outline: none; 
+            border-color: #4facfe; 
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.15); 
+        }
 
+        /* Vibrant Buttons */
         button {
-            background-color: #3b82f6;
+            background: linear-gradient(to right, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 14px 20px;
+            padding: 16px 24px;
             font-size: 16px;
-            font-weight: bold;
-            border-radius: 6px;
+            font-weight: 700;
+            border-radius: 12px;
             cursor: pointer;
             width: 100%;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(118, 75, 162, 0.3);
         }
-        button:hover { background-color: #2563eb; transform: translateY(-1px); }
-        button:disabled { background-color: #94a3b8; cursor: not-allowed; transform: none; }
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 15px 25px rgba(118, 75, 162, 0.4);
+            background: linear-gradient(to right, #764ba2, #667eea);
+        }
+        button:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; color: #64748b;}
 
-        /* Flash Cards CSS */
-        #results-area { display: none; margin-top: 30px; }
+        /* Upgraded Flash Cards CSS */
+        #results-area { display: none; margin-top: 40px; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
         }
         .flash-card {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-top: 4px solid #3b82f6; 
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-top: 5px solid; 
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .flash-card:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.1); }
-        .flash-card h4 { margin-top: 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; font-size: 18px; }
-        .flash-card ul { padding-left: 20px; margin: 0; color: #334155; line-height: 1.6; }
-        .flash-card li { margin-bottom: 10px; }
-        .highlight-text { font-weight: bold; color: #2563eb; font-size: 18px; display: block; margin-bottom: 8px;}
+        .flash-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+        .flash-card h4 { margin-top: 0; color: #0f172a; padding-bottom: 10px; margin-bottom: 15px; font-size: 19px; border-bottom: 2px dashed #e2e8f0; }
+        .flash-card ul { padding-left: 20px; margin: 0; color: #475569; line-height: 1.7; font-size: 15px; }
+        .flash-card li { margin-bottom: 12px; }
+        .highlight-text { font-weight: 700; color: #764ba2; font-size: 20px; display: block; margin-bottom: 10px;}
 
-        /* Chatbot Styles */
-        #chat-history { height: 350px; /* Made the chat taller since it has its own column now */ overflow-y: auto; border: 1px solid #e2e8f0; padding: 15px; margin-bottom: 15px; background-color: #f8fafc; border-radius: 6px; font-size: 14px; }
-        .user-msg { color: #3b82f6; font-weight: bold; margin-bottom: 8px; }
-        .bot-msg { color: #334155; margin-bottom: 18px; line-height: 1.5; }
+        /* Modern Messaging Chatbot Styles */
+        #chat-history { 
+            height: 380px; 
+            overflow-y: auto; 
+            border: 2px solid #e2e8f0; 
+            padding: 20px; 
+            margin-bottom: 15px; 
+            background-color: #f8fafc; 
+            border-radius: 12px; 
+            font-size: 15px; 
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .msg-bubble { max-width: 85%; line-height: 1.5; padding: 12px 18px; position: relative; word-wrap: break-word; }
+        
+        .user-msg { 
+            background: linear-gradient(135deg, #4facfe, #00f2fe); 
+            color: white; 
+            align-self: flex-end; 
+            border-radius: 18px 18px 0 18px;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        }
+        
+        .bot-msg { 
+            background: #ffffff; 
+            color: #334155; 
+            align-self: flex-start; 
+            border-radius: 18px 18px 18px 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        #chat-history::-webkit-scrollbar { width: 6px; }
+        #chat-history::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
         /* Mobile Responsiveness */
-        @media (max-width: 850px) {
+        @media (max-width: 950px) {
             .app-wrapper { flex-direction: column; }
             .right-panel { width: 100%; position: static; }
         }
@@ -117,15 +182,15 @@
     
     <div class="left-panel">
         <div class="container">
-            <h2>Role Matcher</h2>
+            <h2>✨ AI Role Matcher</h2>
             <form id="role-form">
-                <label for="skills">Enter Your Current Profile & Skills:</label>
-                <textarea id="skills" placeholder="E.g. Pursuing BSc. Skills: Python, HTML, CSS, Hadoop, Hive, basic Android dev..." required></textarea>
-                <button type="submit" id="submit-btn">Analyze My Skills</button>
+                <label for="skills">Enter Your Current Profile, Projects & Skills:</label>
+                <textarea id="skills" placeholder="E.g. Pursuing BSc. Skills: Python, HTML, CSS, Hadoop, Hive, basic Android dev. Projects: AI Study Notes Generator..." required></textarea>
+                <button type="submit" id="submit-btn">Analyze My Career Path</button>
             </form>
 
             <div id="results-area">
-                <h3 style="text-align: center; color: #1e293b; margin-top: 30px;">Your Career Blueprint</h3>
+                <h3 style="text-align: center; color: #1e293b; margin-top: 10px; font-weight: 700;">🚀 Your Career Blueprint</h3>
                 <div class="cards-grid">
                     
                     <div class="flash-card" style="border-top-color: #10b981;">
@@ -140,7 +205,7 @@
 
                     <div class="flash-card" style="border-top-color: #f59e0b;">
                         <h4>🔗 The Missing Link</h4>
-                        <div style="color: #334155;">
+                        <div style="color: #475569; font-size: 15px; line-height: 1.6;">
                             <span class="highlight-text" id="card-missing-skill"></span>
                             <span id="card-missing-reason"></span>
                         </div>
@@ -153,13 +218,13 @@
 
     <div class="right-panel">
         <div class="chat-container">
-            <h2>Career FAQ Bot</h2>
+            <h2>🤖 Career FAQ Bot</h2>
             <div id="chat-history">
-                <div class="bot-msg"><strong>AI:</strong> Hi! Do you have any quick questions about interviews, resumes, or learning new skills?</div>
+                <div class="msg-bubble bot-msg"><strong>AI:</strong> Hi there! 👋 Do you have any quick questions about interviews, resumes, or learning new skills?</div>
             </div>
             <div style="display: flex; gap: 10px;">
-                <input type="text" id="chat-input" placeholder="Type your question...">
-                <button onclick="sendMessage()" style="width: auto; white-space: nowrap;">Ask</button>
+                <input type="text" id="chat-input" placeholder="Type your question..." style="margin-bottom: 0;">
+                <button onclick="sendMessage()" style="width: auto; padding: 0 25px;">Ask</button>
             </div>
         </div>
     </div>
@@ -174,7 +239,7 @@
         const btn = document.getElementById('submit-btn');
         const resultsArea = document.getElementById('results-area');
         
-        btn.innerText = "Analyzing Skills...";
+        btn.innerHTML = "⏳ Analyzing Skills...";
         btn.disabled = true;
         resultsArea.style.display = "none"; 
 
@@ -202,7 +267,7 @@
         } catch (error) {
             alert("Oops! Something went wrong analyzing your skills.");
         } finally {
-            btn.innerText = "Analyze My Skills";
+            btn.innerHTML = "Analyze My Career Path";
             btn.disabled = false;
         }
     });
@@ -214,11 +279,12 @@
 
         if (!userText) return;
 
-        chatHistory.innerHTML += `<div class="user-msg">You: ${userText}</div>`;
+        chatHistory.innerHTML += `<div class="msg-bubble user-msg">${userText}</div>`;
         inputField.value = '';
+        chatHistory.scrollTop = chatHistory.scrollHeight;
 
         const loadingId = "loading-" + Date.now();
-        chatHistory.innerHTML += `<div class="bot-msg" id="${loadingId}"><em>Thinking...</em></div>`;
+        chatHistory.innerHTML += `<div class="msg-bubble bot-msg" id="${loadingId}"><em>Thinking... 💭</em></div>`;
         chatHistory.scrollTop = chatHistory.scrollHeight;
 
         try {
@@ -229,7 +295,7 @@
             });
             const data = await response.json();
             document.getElementById(loadingId).remove();
-            chatHistory.innerHTML += `<div class="bot-msg"><strong>AI:</strong> ${data.reply}</div>`;
+            chatHistory.innerHTML += `<div class="msg-bubble bot-msg"><strong>AI:</strong> ${data.reply}</div>`;
         } catch (error) {
             document.getElementById(loadingId).innerHTML = "<strong>AI:</strong> Sorry, there was an error.";
         }
