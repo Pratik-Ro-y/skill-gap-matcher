@@ -272,35 +272,58 @@
         }
     });
 
-    async function sendMessage() {
-        const inputField = document.getElementById('chat-input');
-        const chatHistory = document.getElementById('chat-history');
-        const userText = inputField.value;
+   async function sendMessage() {
+            const inputField = document.getElementById('chat-input');
+            const chatHistory = document.getElementById('chat-history');
+            const sendBtn = document.querySelector('.right-panel button');
+            const userText = inputField.value.trim();
 
-        if (!userText) return;
+            if (!userText) return;
 
-        chatHistory.innerHTML += `<div class="msg-bubble user-msg">${userText}</div>`;
-        inputField.value = '';
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+            // Sanitize before inserting into DOM
+            function escapeHTML(str) {
+                return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+            }
 
-        const loadingId = "loading-" + Date.now();
-        chatHistory.innerHTML += `<div class="msg-bubble bot-msg" id="${loadingId}"><em>Thinking... 💭</em></div>`;
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+            // Use appendChild instead of innerHTML +=
+            function addBubble(html, className) {
+                const div = document.createElement('div');
+                div.className = `msg-bubble ${className}`;
+                div.innerHTML = html;
+                chatHistory.appendChild(div);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                return div;
+            }
 
-        try {
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: userText })
-            });
-            const data = await response.json();
-            document.getElementById(loadingId).remove();
-            chatHistory.innerHTML += `<div class="msg-bubble bot-msg"><strong>AI:</strong> ${data.reply}</div>`;
-        } catch (error) {
-            document.getElementById(loadingId).innerHTML = "<strong>AI:</strong> Sorry, there was an error.";
+            addBubble(`<strong>You:</strong> ${escapeHTML(userText)}`, 'user-msg');
+            inputField.value = '';
+            inputField.disabled = true;
+            sendBtn.disabled = true;
+
+            const loadingBubble = addBubble('<em>Thinking... 💭</em>', 'bot-msg');
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userText })
+                });
+                const data = await response.json();
+                loadingBubble.innerHTML = `<strong>AI:</strong> ${escapeHTML(data.reply)}`;
+            } catch (error) {
+                loadingBubble.innerHTML = '<strong>AI:</strong> Sorry, there was an error.';
+            } finally {
+                inputField.disabled = false;
+                sendBtn.disabled = false;
+                inputField.focus();
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
         }
-        chatHistory.scrollTop = chatHistory.scrollHeight;
-    }
+
+        // Add Enter key support
+        document.getElementById('chat-input').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
 </script>
 
 </body>
